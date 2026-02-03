@@ -1,0 +1,706 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Rest Api [Cometa Aspro Sync]",
+        "description": "Rest Api by Laravel for Cometa Aspro Sync",
+        "contact": {
+            "name": "ASt",
+            "email": "alexandr.statut@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8002/api",
+            "description": "Локальный API сервер v1"
+        },
+        {
+            "url": "http://127.0.0.1:8002/api",
+            "description": "Продакшен API сервер v1"
+        }
+    ],
+    "paths": {
+        "/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Вход",
+                "description": "Возвращает JWT по email и паролю",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учётные данные",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход",
+                "description": "Выход из системы, токен попадает в blacklist",
+                "operationId": "authLogout",
+                "responses": {
+                    "200": {
+                        "description": "Успешный выход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Обновить токен",
+                "description": "По текущему JWT выдаётся новый токен",
+                "operationId": "authRefresh",
+                "responses": {
+                    "200": {
+                        "description": "Новый токен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Текущий пользователь",
+                "description": "Возвращает данные аутентифицированного пользователя",
+                "operationId": "authMe",
+                "responses": {
+                    "200": {
+                        "description": "Данные пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check endpoint",
+                "description": "Проверяет состояние системы: база данных, хранилище, па1мять и системные параметры",
+                "operationId": "ee81941b7829dc173d74f02772a532a1",
+                "responses": {
+                    "200": {
+                        "description": "Все проверки прошли успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "checks": {
+                                            "properties": {
+                                                "database": {
+                                                    "type": "object"
+                                                },
+                                                "storage": {
+                                                    "type": "object"
+                                                },
+                                                "memory_heap": {
+                                                    "type": "object"
+                                                },
+                                                "memory_rss": {
+                                                    "type": "object"
+                                                },
+                                                "system": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Одна или несколько проверок не прошли",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "checks": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/test": {
+            "get": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Получение всех тестов",
+                "description": "Возвращает список всех тестов с пагинацией",
+                "operationId": "testList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Количество записей на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "created_at"
+                        }
+                    },
+                    {
+                        "name": "reverse",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "example": "desc"
+                        }
+                    },
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Поисковый запрос",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "тест"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список тестов успешно получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TestResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Создание нового теста",
+                "description": "Создает новый тест",
+                "operationId": "testStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "title": "Название",
+                                        "description": "Название теста",
+                                        "type": "string",
+                                        "example": "Тест 1"
+                                    },
+                                    "description": {
+                                        "title": "Описание",
+                                        "description": "Описание теста",
+                                        "type": "string",
+                                        "example": "Описание теста",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тест успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/test/{id}": {
+            "get": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Получение теста по ID",
+                "description": "Получает тест по указанному ID",
+                "operationId": "testGetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Обновление теста",
+                "description": "Обновляет тест по указанному ID",
+                "operationId": "testUpdate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "title": "Название",
+                                        "description": "Название теста",
+                                        "type": "string",
+                                        "example": "Тест 1"
+                                    },
+                                    "description": {
+                                        "title": "Описание",
+                                        "description": "Описание теста",
+                                        "type": "string",
+                                        "example": "Описание теста",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Удаление теста",
+                "description": "Удаляет тест по указанному ID",
+                "operationId": "testDestroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Тест успешно удален (no content)"
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ErrorResource": {
+                "title": "Ошибка",
+                "description": "Ответ с информацией об ошибке",
+                "properties": {
+                    "status": {
+                        "title": "Статус",
+                        "description": "Статус операции",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "title": "Код",
+                        "description": "Код ошибки",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 500
+                    },
+                    "msg": {
+                        "title": "Сообщение",
+                        "description": "Текст сообщения об ошибке",
+                        "type": "string",
+                        "example": "Внутренняя ошибка сервера"
+                    }
+                },
+                "type": "object"
+            },
+            "MessageResource": {
+                "title": "Простое сообщение",
+                "description": "Ответ с простым сообщением",
+                "properties": {
+                    "status": {
+                        "title": "Статус",
+                        "description": "Статус операции",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "title": "Код",
+                        "description": "Код ответа",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 200
+                    },
+                    "msg": {
+                        "title": "Сообщение",
+                        "description": "Текст сообщения",
+                        "type": "string",
+                        "example": "Test"
+                    }
+                },
+                "type": "object"
+            },
+            "TestResource": {
+                "title": "Тест",
+                "description": "Информация о тесте",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "Уникальный идентификатор теста",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "title": {
+                        "title": "Название",
+                        "description": "Наименование теста",
+                        "type": "string",
+                        "example": "Тест 1"
+                    },
+                    "description": {
+                        "title": "Описание",
+                        "description": "Описание теста",
+                        "type": "string",
+                        "example": "Описание теста"
+                    }
+                },
+                "type": "object"
+            },
+            "TokenResource": {
+                "title": "Токен авторизации",
+                "description": "JWT и время жизни в секундах",
+                "properties": {
+                    "token": {
+                        "description": "JWT",
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+                    },
+                    "expires_in": {
+                        "description": "Время жизни токена в секундах",
+                        "type": "integer",
+                        "example": 3600
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "Пользователь",
+                "description": "Данные пользователя",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "User"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "apiAuth": {
+                "type": "apiKey",
+                "description": "API ключ для аутентификации. Передать через заголовок X-API-Key, Authorization Bearer или HTTP Only Cookie. В Swagger UI — заголовок X-API-Key.",
+                "name": "X-API-Key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Health",
+            "description": "Health"
+        },
+        {
+            "name": "Auth",
+            "description": "Логин, логаут, обновление токена, текущий пользователь"
+        },
+        {
+            "name": "Test",
+            "description": "Операции с тестами"
+        }
+    ]
+}

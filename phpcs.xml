@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<ruleset name="Laravel">
+    <description>CodeSniffer configuration for Laravel project</description>
+
+    <!-- What to scan -->
+    <file>app</file>
+    <file>database</file>
+    <file>routes</file>
+    <file>tests</file>
+    <file>config</file>
+    <file>resources/views</file>
+
+    <!-- Exclude patterns -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/storage/*</exclude-pattern>
+    <exclude-pattern>*/bootstrap/cache/*</exclude-pattern>
+    <exclude-pattern>*/database/migrations/*</exclude-pattern>
+    <exclude-pattern>*/public/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/config/debugbar.php</exclude-pattern>
+    <exclude-pattern>*/config/l5-swagger.php</exclude-pattern>
+    <exclude-pattern>*/config/jwt.php</exclude-pattern>
+
+    <!-- How to scan -->
+    <arg name="colors"/>
+    <arg name="parallel" value="50"/>
+    <arg value="p"/>
+
+    <!-- Rules: Check against PSR-12 (includes PSR-1) -->
+    <rule ref="PSR12"/>
+
+    <!-- Rules: Дополнительные полезные правила -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="140"/>
+        </properties>
+        <!-- В config часто длинные строки из коробки Laravel -->
+        <exclude-pattern>*/config/*</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Commenting.Todo"/>
+    <rule ref="Generic.PHP.DeprecatedFunctions"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions"/>
+
+    <!-- Allow snake_case for test methods (PHPUnit convention) -->
+    <!-- Отключаем проверку именования методов для тестов -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.NamingConventions.ValidFunctionName.NotCamelCaps">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.NamingConventions.ValidFunctionName.PublicMethodNotCamelCaps">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Allow Laravel-style properties: camelCase, no leading underscore -->
+    <rule ref="Zend.NamingConventions.ValidVariableName">
+        <exclude name="Zend.NamingConventions.ValidVariableName.MemberVarNotCamelCaps"/>
+        <exclude name="Zend.NamingConventions.ValidVariableName.PrivateNoUnderscore"/>
+    </rule>
+
+    <!-- Exclude specific files/directories from strict naming rules -->
+    <exclude-pattern>*/app/MoonShine/*</exclude-pattern>
+    <exclude-pattern>*/app/Models/*</exclude-pattern>
+    <exclude-pattern>*/database/factories/*</exclude-pattern>
+    <exclude-pattern>*/resources/views/*</exclude-pattern>
+</ruleset>

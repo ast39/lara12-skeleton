@@ -1,0 +1,45 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app
+        - database
+        - tests
+        - routes
+        - config
+    excludePaths:
+        - database/migrations/*
+        - vendor/*
+        - storage/*
+        - bootstrap/cache/*
+        - public/*
+        - node_modules/*
+        - tests/Support/_generated/*
+
+    # Ошибки, связанные с архитектурой фреймворка / окружением, а не с багами кода
+    ignoreErrors:
+        # Переопределение Exception::$message (родитель — string, у нас mixed для гибкости)
+        - '#PHPDoc type mixed of property App\\Exceptions\\Api\\TestException::\$message#'
+
+        # Константы из .env / config (l5-swagger), PHPStan не видит bootstrap
+        - '#Constant L5_SWAGGER_DEV_HOST not found#'
+        - '#Constant L5_SWAGGER_PROD_HOST not found#'
+
+        # Константы класса используются в runtime (массивы/конфиг)
+        - '#Constant.*HealthCheckController::(MEMORY_LIMIT_MB|MEMORY_RSS_LIMIT_MB).*unused#'
+
+        # isset() на list — offset 0 всегда есть у non-empty-list, проверка для читаемости
+        - '#Offset 0 on non-empty-list.*isset\(\) always exists#'
+
+        # $useTransaction в catch — PHPStan считает условие всегда true, логика корректна
+        - '#If condition is always true\.#'
+
+        # PHP 8.5+ namespace Pdo\Mysql в config (Laravel проверяет PHP_VERSION_ID)
+        - '#Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql#'
+
+        # Тест-заглушка (assertTrue(true))
+        - '#assertTrue\(\) with true will always evaluate to true#'
+
+    reportUnmatchedIgnoredErrors: true
