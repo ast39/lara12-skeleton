@@ -115,3 +115,26 @@ make check-all
 Коммитить имеет смысл только когда `make check-all` завершается без ошибок.
 
 Подробнее про инструменты и порядок действий — в [PRE_COMMIT.md](PRE_COMMIT.md).
+
+---
+
+## Тесты
+
+В проект добавлены базовые Feature-тесты:
+
+- **Healthcheck**: `GET /api/v1/health`
+- **Auth**: `POST /api/v1/auth/login`, проверка защиты `GET /api/v1/auth/me`
+- **CRUD Test-модуля**: полный цикл по `Route::apiResource('test', ...)` под JWT
+
+### Запуск тестов
+
+```bash
+make test
+```
+
+Полезные варианты:
+
+```bash
+make test-feature
+make test-unit
+```

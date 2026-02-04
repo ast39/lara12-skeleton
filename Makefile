@@ -1,4 +1,4 @@
-.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger
+.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger test test-feature test-unit
 
 # Цвета для вывода
 GREEN  := \033[0;32m
@@ -38,3 +38,15 @@ check-all: lint format static-analysis ## Запуск всех проверок
 swagger: ## Перегенерация Swagger/OpenAPI документации (после изменений в OA-атрибутах)
 	@echo "$(GREEN)Генерация Swagger документации...$(NC)"
 	@php artisan l5-swagger:generate
+
+test: ## Запуск всех тестов (PHPUnit)
+	@echo "$(GREEN)Запуск тестов...$(NC)"
+	@php artisan test
+
+test-feature: ## Запуск Feature тестов
+	@echo "$(GREEN)Запуск Feature тестов...$(NC)"
+	@php artisan test --testsuite=Feature
+
+test-unit: ## Запуск Unit тестов
+	@echo "$(GREEN)Запуск Unit тестов...$(NC)"
+	@php artisan test --testsuite=Unit
