@@ -1,9 +1,12 @@
-.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger test test-feature test-unit
+.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger test test-feature test-unit serve
 
 # Цвета для вывода
 GREEN  := \033[0;32m
 YELLOW := \033[0;33m
 NC     := \033[0m # No Color
+
+# Порт для локального сервера (можно переопределить: make serve PORT=9001)
+PORT ?= 8000
 
 help: ## Показать все доступные команды
 	@echo "$(GREEN)Доступные команды:$(NC)"
@@ -50,3 +53,7 @@ test-feature: ## Запуск Feature тестов
 test-unit: ## Запуск Unit тестов
 	@echo "$(GREEN)Запуск Unit тестов...$(NC)"
 	@php artisan test --testsuite=Unit
+
+serve: ## Запуск локального сервера (php artisan serve --port=$(PORT))
+	@echo "$(GREEN)Запуск локального сервера на порту $(PORT)...$(NC)"
+	@php artisan serve --port=$(PORT)
