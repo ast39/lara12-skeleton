@@ -17,8 +17,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StorageServiceInterface::class, S3Service::class);
 
         if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(\App\Providers\TelescopeServiceProvider::class);
+            if (class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+                $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+                $this->app->register(\App\Providers\TelescopeServiceProvider::class);
+            }
+            if (class_exists(\Laravel\Horizon\HorizonServiceProvider::class)) {
+                $this->app->register(\Laravel\Horizon\HorizonServiceProvider::class);
+                $this->app->register(\App\Providers\HorizonServiceProvider::class);
+            }
         }
     }
 
