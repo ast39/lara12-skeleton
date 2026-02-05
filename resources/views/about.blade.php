@@ -247,7 +247,8 @@
             <a href="{{ url('/api/swagger') }}" target="_blank">Swagger UI</a> |
             <a href="{{ url('/api/docs') }}" target="_blank">API Swagger JSON</a> |
             <a href="{{ route('pre-commit') }}">Pre-Commit</a>@env('local')
-            | <a href="{{ url('/telescope') }}" target="_blank">Telescope</a>@endenv
+            | <a href="{{ url('/telescope') }}" target="_blank">Telescope</a>
+            | <a href="{{ url('/horizon') }}" target="_blank">Horizon</a>@endenv
         </div>
     </div>
 </body>
