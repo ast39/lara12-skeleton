@@ -1,4 +1,4 @@
-.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger test test-feature test-unit serve
+.PHONY: help lint lint-fix format format-fix static-analysis check-all swagger test test-feature test-unit serve branch-up commit safe-commit
 
 # Цвета для вывода
 GREEN  := \033[0;32m
